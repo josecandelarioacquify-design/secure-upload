@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000; min-height: 14.0px}
+    span.s1 {font-kerning: none}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"/&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;title&gt;Secure Document Upload&lt;/title&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;style&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>* { box-sizing: border-box; margin: 0; padding: 0; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>body {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: #f5f5f5;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>display: flex;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>align-items: center;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>justify-content: center;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>min-height: 100vh;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.card {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: white;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border-radius: 12px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: 40px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>max-width: 480px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>width: 100%;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>box-shadow: 0 2px 12px rgba(0,0,0,0.08);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>h1 { font-size: 1.4rem; margin-bottom: 8px; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>p<span class="Apple-converted-space">  </span>{ color: #666; font-size: 0.9rem; margin-bottom: 28px; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>input[type="text"], input[type="file"] {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>width: 100%; padding: 10px 14px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border: 1px solid #ddd; border-radius: 8px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 0.95rem; margin-bottom: 16px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>button {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>width: 100%; padding: 12px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: #000; color: white;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border: none; border-radius: 8px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-size: 1rem; cursor: pointer;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>button:disabled { background: #999; cursor: not-allowed; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.status {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>margin-top: 16px; padding: 12px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border-radius: 8px; font-size: 0.875rem;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>display: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.status.success { background: #e6f4ea; color: #1e7e34; display: block; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.status.error <span class="Apple-converted-space">  </span>{ background: #fdecea; color: #c0392b; display: block; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.lock { font-size: 0.8rem; color: #888; margin-top: 20px; text-align: center; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div class="card"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;h1&gt;Secure Document Upload&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;p&gt;Your document is encrypted in your browser before being sent.&lt;/p&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;form id="uploadForm"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;label for="refName"&gt;Client Name / Reference&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;input type="text" id="refName" placeholder="John Doe - Loan Application" required /&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;label for="fileInput"&gt;PDF Document&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;input type="file" id="fileInput" accept=".pdf" required /&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;button type="submit" id="submitBtn"&gt;Encrypt &amp; Send&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/form&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div class="status" id="statusMsg"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;p class="lock"&gt;End-to-end encrypted · AES-256-GCM + RSA-2048&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;script&gt;</span></p>
+<p class="p1"><span class="s1">const PUBLIC_KEY_PEM = -----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqpnFZ/oBn0bqSaCNFX9d\ntQQFZJQJKJeIDV0Wx0544gywgHsxEJR4ewaQtmYNUi2Ifu9nFccvz7WawLFZv4/x\nsLGP1TA/xlzU/yYPOh6sVW1muYe9iek8/41OUL9wI+hXJbDBjZB2ZgMkKfKxD7AK\nZsC/hwMnAL6poPkAZM0oXiQZCF36DjqE6ypnAHPbdpYn4/hZkWwD6aSDbmvpfwLS\nQVaz4NClzjy2/lB5A8Qu+ea5p/RCd1jGeRVeYpXvQcAgYUVRnMD9kNUcwRphPfq2\nhzbCivjMVxiclATcyP6WjwrKDw5ePdIv7DEq0RIQbKOQWdHUBdz3iS2A2gMUws6Q\njQIDAQAB\n-----END PUBLIC KEY-----\n;</span></p>
+<p class="p1"><span class="s1">const WEBHOOK_URL<span class="Apple-converted-space">    </span>= https://acquify-test-account.app.n8n.cloud/webhook/e9254919-3264-40c9-9470-b26be766f9e3</span></p>
+<p class="p1"><span class="s1">const WEBHOOK_SECRET = Acquify2026;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function toBase64(buffer) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return btoa(String.fromCharCode(...new Uint8Array(buffer)));</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">async function importPublicKey(pem) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const b64 = pem.replace(/-----[^-]+-----/g, '').replace(/\s/g, '');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const binary = Uint8Array.from(atob(b64), c =&gt; c.charCodeAt(0));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return crypto.subtle.importKey(</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>'spki', binary.buffer,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{ name: 'RSA-OAEP', hash: 'SHA-256' },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>false, ['encrypt']</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">async function encryptFile(file, publicKey) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const aesKey = await crypto.subtle.generateKey(</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{ name: 'AES-GCM', length: 256 }, true, ['encrypt']</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const iv <span class="Apple-converted-space">          </span>= crypto.getRandomValues(new Uint8Array(12));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const fileBuffer <span class="Apple-converted-space">  </span>= await file.arrayBuffer();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const encryptedFile = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aesKey, fileBuffer);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const rawAesKey<span class="Apple-converted-space">    </span>= await crypto.subtle.exportKey('raw', aesKey);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const encryptedKey = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, publicKey, rawAesKey);</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>encryptedFile: toBase64(encryptedFile),</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>encryptedKey:<span class="Apple-converted-space">  </span>toBase64(encryptedKey),</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>iv:<span class="Apple-converted-space">            </span>toBase64(iv),</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>fileName:<span class="Apple-converted-space">      </span>file.name,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>mimeType:<span class="Apple-converted-space">      </span>file.type || 'application/pdf'</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">document.getElementById('uploadForm').addEventListener('submit', async (e) =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>e.preventDefault();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const btn<span class="Apple-converted-space">    </span>= document.getElementById('submitBtn');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const status = document.getElementById('statusMsg');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const file <span class="Apple-converted-space">  </span>= document.getElementById('fileInput').files[0];</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const ref<span class="Apple-converted-space">    </span>= document.getElementById('refName').value;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>btn.disabled <span class="Apple-converted-space">    </span>= true;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>btn.textContent<span class="Apple-converted-space">  </span>= 'Encrypting...';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>status.className = 'status';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>status.style.display = 'none';</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>try {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const pubKey<span class="Apple-converted-space">  </span>=<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const payload = await encryptFile(file, pubKey);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>payload.reference = ref;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const res = await fetch(WEBHOOK_URL, {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>method: 'POST',</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>headers: {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>'Content-Type': 'application/json',</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>'X-Webhook-Secret': WEBHOOK_SECRET</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>body: JSON.stringify(payload)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (!res.ok) throw new Error('Server error: ' + res.status);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>status.textContent = 'Document sent successfully.';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>status.className <span class="Apple-converted-space">  </span>= 'status success';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>e.target.reset();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>} catch (err) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>status.textContent = 'Error: ' + err.message;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>status.className <span class="Apple-converted-space">  </span>= 'status error';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>} finally {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>btn.disabled<span class="Apple-converted-space">    </span>= false;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>btn.textContent = 'Encrypt &amp; Send';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p1"><span class="s1">});</span></p>
+<p class="p1"><span class="s1">&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+</body>
+</html>
