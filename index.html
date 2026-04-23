@@ -6,43 +6,16 @@
   <title>Secure Document Upload</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f5f5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-    }
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 40px;
-      max-width: 480px;
-      width: 100%;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .card { background: white; border-radius: 12px; padding: 40px; max-width: 480px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
     h1 { font-size: 1.4rem; margin-bottom: 8px; }
     p  { color: #666; font-size: 0.9rem; margin-bottom: 28px; }
     label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
-    input[type="text"], input[type="file"] {
-      width: 100%; padding: 10px 14px;
-      border: 1px solid #ddd; border-radius: 8px;
-      font-size: 0.95rem; margin-bottom: 16px;
-    }
-    button {
-      width: 100%; padding: 12px;
-      background: #000; color: white;
-      border: none; border-radius: 8px;
-      font-size: 1rem; cursor: pointer;
-    }
+    input[type="text"], input[type="file"] { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; margin-bottom: 16px; }
+    button { width: 100%; padding: 12px; background: #000; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
     .progress { display: none; margin-top: 20px; align-items: center; gap: 10px; }
-    .spinner {
-      width: 20px; height: 20px;
-      border: 2px solid #ddd; border-top-color: #000;
-      border-radius: 50%; animation: spin 0.8s linear infinite;
-    }
+    .spinner { width: 20px; height: 20px; border: 2px solid #ddd; border-top-color: #000; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .status { margin-top: 16px; font-size: 0.9rem; display: none; }
     .status.error { color: #c00; }
@@ -68,7 +41,6 @@
     <div class="status" id="statusMsg"></div>
     <p class="lock">End-to-end encrypted &middot; AES-256-GCM + RSA-2048</p>
   </div>
-
 <script>
 const PUBLIC_KEY_PEM = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqpnFZ/oBn0bqSaCNFX9d\ntQQFZJQJKJeIDV0Wx0544gywgHsxEJR4ewaQtmYNUi2Ifu9nFccvz7WawLFZv4/x\nsLGP1TA/xlzU/yYPOh6sVW1muYe9iek8/41OUL9wI+hXJbDBjZB2ZgMkKfKxD7AK\nZsC/hwMnAL6poPkAZM0oXiQZCF36DjqE6ypnAHPbdpYn4/hZkWwD6aSDbmvpfwLS\nQVaz4NClzjy2/lB5A8Qu+ea5p/RCd1jGeRVeYpXvQcAgYUVRnMD9kNUcwRphPfq2\nhzbCivjMVxiclATcyP6WjwrKDw5ePdIv7DEq0RIQbKOQWdHUBdz3iS2A2gMUws6Q\njQIDAQAB\n-----END PUBLIC KEY-----\n";
 const WEBHOOK_URL    = "https://acquify-test-account.app.n8n.cloud/webhook/e9254919-3264-40c9-9470-b26be766f9e3";
@@ -138,22 +110,46 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
 
     const res = await fetch(WEBHOOK_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Webhook-Secret': WEBHOOK_SECRET
-      },
+      headers: { 'Content-Type': 'application/json', 'X-Webhook-Secret': WEBHOOK_SECRET },
       body: JSON.stringify(payload)
     });
 
     if (!res.ok) throw new Error('Server error: ' + res.status);
 
-    const blob    = await res.blob();
+    // Leer respuesta como texto y extraer el XML correctamente
+    const rawText = await res.text();
+    let xmlContent = rawText;
+
+    // Si n8n devuelve JSON, extraer el campo XML
+    try {
+      const parsed = JSON.parse(rawText);
+      xmlContent =
+        parsed.xml ||
+        parsed.xmlContent ||
+        parsed.content ||
+        parsed.body ||
+        (Array.isArray(parsed) && parsed[0]?.xml) ||
+        (Array.isArray(parsed) && parsed[0]?.content) ||
+        (Array.isArray(parsed) && parsed[0]?.body) ||
+        rawText;
+    } catch (e) {
+      // Ya es texto XML plano, usar directamente
+      xmlContent = rawText;
+    }
+
+    if (!xmlContent || xmlContent.trim().length === 0) {
+      throw new Error('El servidor devolvio una respuesta vacia. Verifica el nodo "Respond to Webhook" en n8n.');
+    }
+
+    const blob    = new Blob([xmlContent], { type: 'application/xml' });
     const xmlName = file.name.replace(/\.pdf$/i, '') + '_mismo_3_4.xml';
     const url     = URL.createObjectURL(blob);
     const a       = document.createElement('a');
     a.href        = url;
     a.download    = xmlName;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
     progress.style.display = 'none';
@@ -174,5 +170,3 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
 </script>
 </body>
 </html>
-
-
