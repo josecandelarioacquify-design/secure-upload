@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Download MISMO 3.4 XML</title>
+  <title>Secure Document Upload</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -21,87 +21,158 @@
       max-width: 480px;
       width: 100%;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      text-align: center;
     }
-    .icon { font-size: 3rem; margin-bottom: 16px; }
     h1 { font-size: 1.4rem; margin-bottom: 8px; }
-    .ref { color: #666; font-size: 0.9rem; margin-bottom: 28px; }
-    .filename {
-      background: #f5f5f5;
-      border-radius: 8px;
-      padding: 12px 16px;
-      font-size: 0.9rem;
-      color: #333;
-      margin-bottom: 24px;
-      word-break: break-all;
+    p  { color: #666; font-size: 0.9rem; margin-bottom: 28px; }
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+    input[type="text"], input[type="file"] {
+      width: 100%; padding: 10px 14px;
+      border: 1px solid #ddd; border-radius: 8px;
+      font-size: 0.95rem; margin-bottom: 16px;
     }
     button {
       width: 100%; padding: 12px;
       background: #000; color: white;
       border: none; border-radius: 8px;
       font-size: 1rem; cursor: pointer;
-      margin-bottom: 12px;
     }
-    button:hover { background: #222; }
-    .back {
-      display: block;
-      text-align: center;
-      color: #888;
-      font-size: 0.85rem;
-      text-decoration: none;
-      margin-top: 8px;
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .progress { display: none; margin-top: 20px; align-items: center; gap: 10px; }
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2px solid #ddd; border-top-color: #000;
+      border-radius: 50%; animation: spin 0.8s linear infinite;
     }
-    .back:hover { color: #333; }
-    .error {
-      color: #c00;
-      font-size: 0.9rem;
-      margin-top: 16px;
-    }
-    .lock { margin-top: 24px; color: #aaa; font-size: 0.78rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .status { margin-top: 16px; font-size: 0.9rem; display: none; }
+    .status.error { color: #c00; }
+    .status.success { color: #080; }
+    .lock { margin-top: 20px; text-align: center; color: #aaa; font-size: 0.78rem; }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="icon">✅</div>
-    <h1>Conversion Complete</h1>
-    <p class="ref" id="refText"></p>
-    <div class="filename" id="fileNameDisplay"></div>
-    <button id="downloadBtn">Download MISMO 3.4 XML</button>
-    <a href="./index.html" class="back">← Convert another document</a>
-    <p class="lock">End-to-end encrypted · AES-256-GCM + RSA-2048</p>
+    <h1>Secure Document Upload</h1>
+    <p>Your document is encrypted in your browser before being sent.</p>
+    <form id="uploadForm">
+      <label for="refName">Client Name / Reference</label>
+      <input type="text" id="refName" placeholder="John Doe - Loan Application" required />
+      <label for="fileInput">PDF Document</label>
+      <input type="file" id="fileInput" accept=".pdf" required />
+      <button type="submit" id="submitBtn">Encrypt &amp; Send</button>
+    </form>
+    <div class="progress" id="progressMsg">
+      <span class="spinner"></span>
+      <span id="progressText">Encrypting document...</span>
+    </div>
+    <div class="status" id="statusMsg"></div>
+    <p class="lock">End-to-end encrypted &middot; AES-256-GCM + RSA-2048</p>
   </div>
 
 <script>
-  const xml      = sessionStorage.getItem('mismoXml');
-  const fileName = sessionStorage.getItem('mismoFileName');
-  const ref      = sessionStorage.getItem('mismoRef');
+const PUBLIC_KEY_PEM = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqpnFZ/oBn0bqSaCNFX9d\ntQQFZJQJKJeIDV0Wx0544gywgHsxEJR4ewaQtmYNUi2Ifu9nFccvz7WawLFZv4/x\nsLGP1TA/xlzU/yYPOh6sVW1muYe9iek8/41OUL9wI+hXJbDBjZB2ZgMkKfKxD7AK\nZsC/hwMnAL6poPkAZM0oXiQZCF36DjqE6ypnAHPbdpYn4/hZkWwD6aSDbmvpfwLS\nQVaz4NClzjy2/lB5A8Qu+ea5p/RCd1jGeRVeYpXvQcAgYUVRnMD9kNUcwRphPfq2\nhzbCivjMVxiclATcyP6WjwrKDw5ePdIv7DEq0RIQbKOQWdHUBdz3iS2A2gMUws6Q\njQIDAQAB\n-----END PUBLIC KEY-----\n";
+const WEBHOOK_URL    = "https://acquify-test-account.app.n8n.cloud/webhook/e9254919-3264-40c9-9470-b26be766f9e3";
+const WEBHOOK_SECRET = "Acquify2026";
 
-  if (!xml || !fileName) {
-    document.querySelector('.icon').textContent = '⚠️';
-    document.querySelector('h1').textContent = 'No document found';
-    document.querySelector('.ref').textContent = 'Please go back and upload a document first.';
-    document.querySelector('.filename').style.display = 'none';
-    document.getElementById('downloadBtn').style.display = 'none';
-  } else {
-    document.getElementById('refText').textContent = ref || '';
-    document.getElementById('fileNameDisplay').textContent = fileName;
-
-    document.getElementById('downloadBtn').addEventListener('click', () => {
-      const blob = new Blob([xml], { type: 'application/xml' });
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href     = url;
-      a.download = fileName;
-      a.click();
-      URL.revokeObjectURL(url);
-
-      // Limpiar sessionStorage después de descargar
-      sessionStorage.removeItem('mismoXml');
-      sessionStorage.removeItem('mismoFileName');
-      sessionStorage.removeItem('mismoRef');
-    });
+function toBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  const chunkSize = 8192;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.subarray(i, i + chunkSize);
+    binary += String.fromCharCode.apply(null, chunk);
   }
+  return btoa(binary);
+}
+
+async function importPublicKey(pem) {
+  const b64 = pem.replace(/-----[^-]+-----/g, '').replace(/\s/g, '');
+  const binary = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  return crypto.subtle.importKey('spki', binary.buffer, { name: 'RSA-OAEP', hash: 'SHA-256' }, false, ['encrypt']);
+}
+
+async function encryptFile(file, publicKey) {
+  const aesKey = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt']);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const fileBuffer = await file.arrayBuffer();
+  const encryptedFile = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aesKey, fileBuffer);
+  const rawAesKey = await crypto.subtle.exportKey('raw', aesKey);
+  const encryptedKey = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, publicKey, rawAesKey);
+  return {
+    encryptedFile: toBase64(encryptedFile),
+    encryptedKey:  toBase64(encryptedKey),
+    iv:            toBase64(iv),
+    fileName:      file.name,
+    mimeType:      file.type || 'application/pdf'
+  };
+}
+
+document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn      = document.getElementById('submitBtn');
+  const status   = document.getElementById('statusMsg');
+  const progress = document.getElementById('progressMsg');
+  const progText = document.getElementById('progressText');
+  const file     = document.getElementById('fileInput').files[0];
+  const ref      = document.getElementById('refName').value;
+
+  if (!file) {
+    status.textContent = 'Please select a PDF file.';
+    status.className = 'status error';
+    status.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  status.style.display = 'none';
+  status.className = 'status';
+  progress.style.display = 'flex';
+  progText.textContent = 'Encrypting document...';
+
+  try {
+    const pubKey  = await importPublicKey(PUBLIC_KEY_PEM);
+    const payload = await encryptFile(file, pubKey);
+    payload.reference = ref;
+
+    progText.textContent = 'Sending to server for AI processing... (this may take 30-60 seconds)';
+
+    const res = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Webhook-Secret': WEBHOOK_SECRET
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) throw new Error('Server error: ' + res.status);
+
+    const blob    = await res.blob();
+    const xmlName = file.name.replace(/\.pdf$/i, '') + '_mismo_3_4.xml';
+    const url     = URL.createObjectURL(blob);
+    const a       = document.createElement('a');
+    a.href        = url;
+    a.download    = xmlName;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    progress.style.display = 'none';
+    status.textContent = '✓ Document converted. Download started: ' + xmlName;
+    status.className = 'status success';
+    status.style.display = 'block';
+    e.target.reset();
+
+  } catch (err) {
+    progress.style.display = 'none';
+    status.textContent = 'Error: ' + err.message;
+    status.className = 'status error';
+    status.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+  }
+});
 </script>
 </body>
 </html>
+
 
