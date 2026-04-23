@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Download MISMO XML</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .icon { font-size: 3rem; margin-bottom: 16px; }
+    h1 { font-size: 1.4rem; margin-bottom: 8px; }
+    .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 8px; }
+    .filename {
+      display: inline-block;
+      background: #f0f0f0;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-family: monospace;
+      color: #333;
+      margin-bottom: 32px;
+    }
+    .btn-download {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: #000;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      margin-bottom: 12px;
+    }
+    .btn-download:hover { background: #222; }
+    .btn-new {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      color: #555;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-new:hover { background: #f5f5f5; }
+    .lock { font-size: 0.8rem; color: #888; margin-top: 24px; }
+    .error-state { color: #c0392b; }
+  </style>
+</head>
+<body>
+<div class="card" id="mainCard">
+  <div class="icon">✅</div>
+  <h1>Document Ready</h1>
+  <p class="subtitle">Your MISMO 3.4 XML file has been generated.</p>
+  <div class="filename" id="fileNameDisplay">document.xml</div>
+
+  <a id="downloadBtn" class="btn-download" href="#" download>
+    ⬇ Download MISMO XML
+  </a>
+
+  <a href="./index.html" class="btn-new">
+    ↑ Convert another document
+  </a>
+
+  <p class="lock">End-to-end encrypted · AES-256-GCM + RSA-2048</p>
+</div>
+
+<script>
+  const xmlText  = sessionStorage.getItem('mismoXml');
+  const xmlName  = sessionStorage.getItem('mismoFileName') || 'document.xml';
+  const ref      = sessionStorage.getItem('mismoRef') || '';
+
+  if (!xmlText) {
+    // Si no hay datos (acceso directo sin pasar por el form), redirigir
+    document.getElementById('mainCard').innerHTML = `
+      <div class="icon">⚠️</div>
+      <h1 class="error-state">No document found</h1>
+      <p class="subtitle" style="margin-bottom:32px">Please upload a PDF first.</p>
+      <a href="./index.html" class="btn-download" style="text-align:center">Go to Upload Form</a>
+    `;
+  } else {
+    // Crear el blob y el link de descarga
+    const blob = new Blob([xmlText], { type: 'application/xml' });
+    const url  = URL.createObjectURL(blob);
+
+    const btn = document.getElementById('downloadBtn');
+    btn.href     = url;
+    btn.download = xmlName;
+
+    document.getElementById('fileNameDisplay').textContent = xmlName;
+
+    // Descarga automatica al cargar la pagina
+    btn.click();
+
+    // Limpiar sessionStorage despues de descargar
+    sessionStorage.removeItem('mismoXml');
+    sessionStorage.removeItem('mismoFileName');
+    sessionStorage.removeItem('mismoRef');
+  }
+</script>
+</body>
+</html>
