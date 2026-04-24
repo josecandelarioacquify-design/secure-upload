@@ -123,8 +123,22 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
     const rawText = await res.text();
     let xmlContent = rawText;
 
+    // Verificar si la respuesta es un error del servidor
     try {
       const parsed = JSON.parse(rawText);
+      const errorMsg =
+        parsed.error ||
+        (Array.isArray(parsed) && parsed[0]?.error);
+
+      if (errorMsg) {
+        progress.style.display = 'none';
+        status.textContent = '⚠ ' + errorMsg;
+        status.className = 'status error';
+        status.style.display = 'block';
+        btn.disabled = false;
+        return;
+      }
+
       xmlContent =
         parsed.xml ||
         parsed.xmlContent ||
@@ -139,17 +153,15 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
     }
 
     if (!xmlContent || xmlContent.trim().length === 0) {
-      throw new Error('El servidor devolvio una respuesta vacia. Verifica el nodo "Respond to Webhook" en n8n.');
+      throw new Error('El servidor devolvio una respuesta vacia.');
     }
 
-    // Usar el nombre ingresado por el cliente como nombre del archivo
     const xmlName = sanitizeName(ref) + '_mismo_3_4.xml';
-
-    const blob = new Blob([xmlContent], { type: 'application/xml' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href     = url;
-    a.download = xmlName;
+    const blob    = new Blob([xmlContent], { type: 'application/xml' });
+    const url     = URL.createObjectURL(blob);
+    const a       = document.createElement('a');
+    a.href        = url;
+    a.download    = xmlName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
