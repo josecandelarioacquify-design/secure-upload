@@ -79,6 +79,10 @@ async function encryptFile(file, publicKey) {
   };
 }
 
+function sanitizeName(name) {
+  return name.trim().replace(/[^a-zA-Z0-9\s\-_]/g, '').replace(/\s+/g, '_');
+}
+
 document.getElementById('uploadForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn      = document.getElementById('submitBtn');
@@ -116,11 +120,9 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
 
     if (!res.ok) throw new Error('Server error: ' + res.status);
 
-    // Leer respuesta como texto y extraer el XML correctamente
     const rawText = await res.text();
     let xmlContent = rawText;
 
-    // Si n8n devuelve JSON, extraer el campo XML
     try {
       const parsed = JSON.parse(rawText);
       xmlContent =
@@ -133,7 +135,6 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
         (Array.isArray(parsed) && parsed[0]?.body) ||
         rawText;
     } catch (e) {
-      // Ya es texto XML plano, usar directamente
       xmlContent = rawText;
     }
 
@@ -141,12 +142,14 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
       throw new Error('El servidor devolvio una respuesta vacia. Verifica el nodo "Respond to Webhook" en n8n.');
     }
 
-    const blob    = new Blob([xmlContent], { type: 'application/xml' });
-    const xmlName = file.name.replace(/\.pdf$/i, '') + '_mismo_3_4.xml';
-    const url     = URL.createObjectURL(blob);
-    const a       = document.createElement('a');
-    a.href        = url;
-    a.download    = xmlName;
+    // Usar el nombre ingresado por el cliente como nombre del archivo
+    const xmlName = sanitizeName(ref) + '_mismo_3_4.xml';
+
+    const blob = new Blob([xmlContent], { type: 'application/xml' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = xmlName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
